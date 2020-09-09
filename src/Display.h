@@ -12,7 +12,7 @@ public:
     void setup();
     void handle();
 
-// private:
+    static void print(lv_log_level_t level, const char * file, uint32_t line, const char * func, const char * dsc);
     static void flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
     static bool touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
 

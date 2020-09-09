@@ -2,8 +2,12 @@
 
 #include "Logger.h"
 
-static lv_color_t buf1[LV_VER_RES_MAX * 32];
-static lv_color_t buf2[LV_VER_RES_MAX * 32];
+#include <lv_examples.h>
+
+#define LVLG_SIZE_OF_BUFFER (LV_HOR_RES_MAX * 12)
+
+static lv_color_t buf1[LVLG_SIZE_OF_BUFFER];
+static lv_color_t buf2[LVLG_SIZE_OF_BUFFER];
 
 /********************************************************/
 /******************** Public Method *********************/
@@ -15,14 +19,18 @@ void Display::setup()
     _tft.begin();        /* TFT init */
     _tft.setRotation(1); /* Landscape orientation */
 
+#if LV_USE_LOG != 0
+    lv_log_register_print_cb(Disp.print); /* register print function for debugging */
+#endif
+
     // Initialize buffer for screen
-    lv_disp_buf_init(&_disp_buf, buf1, buf2, LV_VER_RES_MAX * 32);
+    lv_disp_buf_init(&_disp_buf, buf1, buf2, LVLG_SIZE_OF_BUFFER);
 
     // Initialize the display
     lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
-    disp_drv.hor_res = LV_VER_RES_MAX;
-    disp_drv.ver_res = LV_HOR_RES_MAX;
+    // disp_drv.hor_res = LV_VER_RES_MAX;
+    // disp_drv.ver_res = LV_HOR_RES_MAX;
     disp_drv.flush_cb = flush;
     disp_drv.buffer = &_disp_buf;
     lv_disp_drv_register(&disp_drv);
@@ -33,6 +41,8 @@ void Display::setup()
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = touchpad_read;
     lv_indev_drv_register(&indev_drv);
+
+    lv_demo_widgets();
 }
 
 void Display::handle()
@@ -41,8 +51,17 @@ void Display::handle()
 }
 
 /********************************************************/
-/******************** Private Method ********************/
+/******************** Static Method *********************/
 /********************************************************/
+
+#if LV_USE_LOG != 0
+/* Serial debugging */
+void Display::print(lv_log_level_t level, const char * file, uint32_t line,  const char * func, const char * dsc)
+{
+    Serial.printf("%s@%d->%s\r\n", file, line, dsc);
+    Serial.flush();
+}
+#endif
 
 /* Display flushing */
 void Display::flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
@@ -66,7 +85,6 @@ bool Display::touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
     uint16_t touchX, touchY;
 
     bool touched = Disp._tft.getTouch(&touchX, &touchY, 600);
-    // bool touched = false;
 
     if (!touched)
     {
@@ -101,6 +119,10 @@ bool Display::touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 
     return false; /*Return `false` because we are not buffering and no more data to read*/
 }
+
+/********************************************************/
+/******************** Private Method ********************/
+/********************************************************/
 
 #if !defined(NO_GLOBAL_INSTANCES)
 Display Disp;
