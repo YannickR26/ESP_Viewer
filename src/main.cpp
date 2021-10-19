@@ -30,6 +30,7 @@ void wifiSetup()
   wifiManager.addParameter(&custom_mqtt_server);
   wifiManager.addParameter(&custom_mqtt_port);
   wifiManager.addParameter(&custom_mqtt_username);
+  wifiManager.addParameter(&custom_mqtt_userpassword);
 
   Log.println("Try to connect to WiFi...");
   wifiManager.setWiFiAPChannel(6);

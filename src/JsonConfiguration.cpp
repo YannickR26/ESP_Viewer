@@ -142,9 +142,9 @@ uint8_t JsonConfiguration::decodeJsonFromFile(const char *input)
   DeserializationError error = deserializeJson(doc, input);
   if (error)
   {
-    Serial.print("Failed to deserialize JSON, error: ");
-    Serial.println(error.c_str());
-    // restoreDefault();
+    Log.print("Failed to deserialize JSON, error: ");
+    Log.println(error.c_str());
+    restoreDefault();
     return -1;
   }
 
