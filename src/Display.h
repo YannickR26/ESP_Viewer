@@ -11,6 +11,7 @@ public:
 
     void setup();
     void handle();
+    void calibrate();
 
     static void print(lv_log_level_t level, const char * file, uint32_t line, const char * func, const char * dsc);
     static void flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
